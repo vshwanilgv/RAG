@@ -57,9 +57,9 @@ def answer(question: str, vectorstore=None) -> dict:
     if confidence == "low":
         print("  Warning: low retrieval confidence — answer may be incomplete")
 
-    # Call GPT-4o
+    # Call GPT-4o mini
     llm = ChatOpenAI(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         temperature=0,              # temperature=0 for factual financial Q&A
         openai_api_key=os.getenv("OPENAI_API_KEY")
     )

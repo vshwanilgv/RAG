@@ -39,6 +39,18 @@ GOLDEN_SET = [
         "question": "By how much did AWS sales increase in 2024?",
         "ground_truth": "AWS sales increased 19% in 2024 compared to the prior year."
     },
+    {
+    "question": "What was Amazon's International segment revenue in 2024?",
+    "ground_truth": "Amazon's International segment revenue was $143 billion in 2024, up 9% from $131 billion in 2023."
+    },
+    {
+        "question": "What was Amazon's net product sales in 2024?",
+        "ground_truth": "Amazon's net product sales were $272,311 million in 2024."
+    },
+    {
+        "question": "What was Amazon's net service sales in 2024?",
+        "ground_truth": "Amazon's net service sales were $365,648 million in 2024."
+    },
 ]
 
 
