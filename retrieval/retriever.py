@@ -8,7 +8,7 @@ from ingestion.embedder import load_vectorstore, get_embeddings
 
 load_dotenv()
 
-# ── 1. Query rewriter ─────────────────────────────────────────────────────────
+# ── 1. Query rewriter 
 # Rewrites the user's conversational question into a search-optimized query.
 # "How'd AWS do last year?" → "AWS revenue growth performance 2024"
 
@@ -35,9 +35,8 @@ def rewrite_query(question: str) -> str:
     return rewritten
 
 
-# ── 2. Vector retriever ───────────────────────────────────────────────────────
+# ── 2. Vector retriever 
 # Pulls top-k chunks by semantic similarity from Chroma.
-# We fetch more than we need (k=15) because the reranker will trim it down.
 
 def vector_retrieve(query: str, vectorstore: Chroma, k: int = 15):
     results = vectorstore.similarity_search_with_score(query, k=k)
@@ -46,11 +45,8 @@ def vector_retrieve(query: str, vectorstore: Chroma, k: int = 15):
     return [doc for doc, _ in filtered]
 
 
-# ── 3. Cohere reranker ────────────────────────────────────────────────────────
+# ── 3. Cohere reranker 
 # Re-scores the top-15 chunks against the original question.
-# This is the biggest single quality improvement you can make to a RAG system.
-# The reranker reads the full question + each chunk together — much more accurate
-# than vector similarity alone.
 
 def rerank(question: str, documents, top_n: int = 5):
     co = cohere.Client(os.getenv("COHERE_API_KEY"))
@@ -73,20 +69,21 @@ def rerank(question: str, documents, top_n: int = 5):
 
     return reranked_docs
 
-# Combines all three steps: rewrite → retrieve → rerank
 
 def retrieve(question: str, vectorstore: Chroma, top_n: int = 5):
     print("\n[Retrieval Pipeline]")
     search_query = rewrite_query(question)
-
     candidates = vector_retrieve(search_query, vectorstore, k=15)
     print(f"  Retrieved {len(candidates)} candidate chunks")
+    reranked = rerank(question, candidates, top_n=top_n)
 
-    final_docs = rerank(question, candidates, top_n=top_n)
+    filtered = [d for d in reranked if d.metadata["rerank_score"] >= 0.5]
+    final_docs = filtered if len(filtered) >= 2 else reranked[:2]
+
     print(f"  Reranked to top {len(final_docs)} chunks")
 
     top_score = final_docs[0].metadata["rerank_score"] if final_docs else 0
     confidence = "high" if top_score > 0.7 else "low"
     print(f"  Confidence: {confidence} (top score: {top_score})")
 
-    return final_docs, confidence 
+    return final_docs, confidence
