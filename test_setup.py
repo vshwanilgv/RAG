@@ -1,4 +1,3 @@
-# save as test_setup.py in your project root
 import os
 from dotenv import load_dotenv
 from openai import OpenAI

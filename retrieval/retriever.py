@@ -73,8 +73,6 @@ def rerank(question: str, documents, top_n: int = 5):
 
     return reranked_docs
 
-
-# ── 4. Full pipeline ──────────────────────────────────────────────────────────
 # Combines all three steps: rewrite → retrieve → rerank
 
 def retrieve(question: str, vectorstore: Chroma, top_n: int = 5):
@@ -87,4 +85,8 @@ def retrieve(question: str, vectorstore: Chroma, top_n: int = 5):
     final_docs = rerank(question, candidates, top_n=top_n)
     print(f"  Reranked to top {len(final_docs)} chunks")
 
-    return final_docs
+    top_score = final_docs[0].metadata["rerank_score"] if final_docs else 0
+    confidence = "high" if top_score > 0.7 else "low"
+    print(f"  Confidence: {confidence} (top score: {top_score})")
+
+    return final_docs, confidence 

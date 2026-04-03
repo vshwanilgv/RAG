@@ -12,9 +12,10 @@ questions = [
 for q in questions:
     print(f"\n{'='*60}")
     print(f"Question: {q}")
-    docs = retrieve(q, db, top_n=3)
+    docs, confidence = retrieve(q, db, top_n=3)
     print(f"\nTop chunks returned:")
     for i, doc in enumerate(docs, 1):
         print(f"\n  [{i}] Page {doc.metadata['page']} "
               f"| rerank score: {doc.metadata['rerank_score']}")
         print(f"  {doc.page_content[:250]}...")
+    print(f"\nOverall confidence: {confidence}")
