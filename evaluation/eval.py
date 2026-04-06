@@ -77,8 +77,7 @@ def run_evaluation():
         "ground_truth": ground_truths,
     })
 
-    # Run evaluation — uses GPT-4o as the judge
-    llm = ChatOpenAI(model="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY"))
+    llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=os.getenv("OPENAI_API_KEY"))
     embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
 
     scores = evaluate(
