@@ -8,10 +8,6 @@ from ingestion.embedder import load_vectorstore, get_embeddings
 
 load_dotenv()
 
-# ── 1. Query rewriter 
-# Rewrites the user's conversational question into a search-optimized query.
-# "How'd AWS do last year?" → "AWS revenue growth performance 2024"
-
 REWRITE_PROMPT = PromptTemplate.from_template("""
 You are a financial document search assistant.
 Rewrite the user's question as a short, keyword-rich search query 
@@ -34,19 +30,11 @@ def rewrite_query(question: str) -> str:
     print(f"  Rewritten: {rewritten}")
     return rewritten
 
-
-# ── 2. Vector retriever 
-# Pulls top-k chunks by semantic similarity from Chroma.
-
 def vector_retrieve(query: str, vectorstore: Chroma, k: int = 15):
     results = vectorstore.similarity_search_with_score(query, k=k)
     # Filter out very low similarity scores (below 0.4 = likely irrelevant)
     filtered = [(doc, score) for doc, score in results if score < 1.2]
     return [doc for doc, _ in filtered]
-
-
-# ── 3. Cohere reranker 
-# Re-scores the top-15 chunks against the original question.
 
 def rerank(question: str, documents, top_n: int = 5):
     co = cohere.Client(os.getenv("COHERE_API_KEY"))
@@ -68,7 +56,6 @@ def rerank(question: str, documents, top_n: int = 5):
         reranked_docs.append(doc)
 
     return reranked_docs
-
 
 def retrieve(question: str, vectorstore: Chroma, top_n: int = 5):
     print("\n[Retrieval Pipeline]")
