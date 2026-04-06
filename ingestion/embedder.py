@@ -1,4 +1,3 @@
-# ingestion/embedder.py
 import os
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
@@ -8,8 +7,6 @@ from typing import List
 
 load_dotenv()
 
-# use a persistent Chroma directory so you don't
-# re-embed documents on every restart
 CHROMA_PATH = "./chroma_db"
 COLLECTION_NAME = "finsight_docs"
 

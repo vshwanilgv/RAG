@@ -1,4 +1,3 @@
-# ingestion/run_ingest.py
 """
 Run this once per new document you want to add to FinSight.
 Usage: python -m ingestion.run_ingest --file reports/apple_10k_2024.pdf
